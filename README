@@ -1,0 +1,71 @@
+Typed CL
+--------
+
+I love Common Lisp because it is the programmable programming
+language, but the one problem I have with it is that it is dynamically
+typed.  I often find myself looking through code that others have
+written wondering 'just what is the type of this function argument or
+variable'.  This package is an answer to my desire for more default
+type information in common lisp.
+
+Typed CL is an extension to Common Lisp which allows for the typed
+decleration of functions and variables.  Under the hood, it takes the
+type information and writes the declerations for you, making your code
+not only easier to read and safer (due to compiler type checks), but
+it also gives the compiler more information for optimization and
+(should) make your code run faster.
+
+Some might say that dynamic typing is one of the best features of
+Common Lisp.  The point of this project is twofold: during initial
+writing and during editing/optimization.  You can hack with no types
+and add them in later, or you can write them in during inital coding.
+I find the syntax simpler and clearer than adding your own type
+declerations by themselves.
+
+Usage
+-----
+
+Typed CL comes with an asdf package that can be loaded or required as
+needed.  I will look into adding it to quicklisp in the future.
+
+Examples
+--------
+
+A simple example:
+
+(def number square ((number x))
+     (* x x))
+
+def is exactly like defun except for including the return type and
+function parameter types.  
+
+A helper type 'list-of' is included to show how you can create
+programmably verified types for your parameters:
+
+(def integer sum (((list-of integer) l))
+     (vars ((integer sum 0))
+	   (dolist (n l)
+     	     (setf sum (+ sum n)))
+	   sum))
+
+The above example also shows how to use the vars/vars* macros.  ldef
+is the analog of labels with type information and follows the same
+convention/syntax as def.
+
+Essentially, adding type information just means to wrap your
+parameters/variables with an extra set of parens, and put the type of
+before the name and the default value after.
+
+The real benefit is with safety > 0.  At least with SBCL it will give
+plenty of warnings when the types do not match what is defined in the
+signatures and declerations.
+
+Care has been taken to provide decent warning/error messages on
+invalid syntax but it's not perfect.  Sometimes the messages are a bit
+hard to decipher.
+
+Any comments/feedback can be sent to my email address below.
+
+--
+Burton Samograd <burton.samograd@gmail.com>
+http://kruhft.dyndns.org

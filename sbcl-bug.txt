@@ -1,0 +1,56 @@
+Using the following type decleration:
+
+--------------------------------------------------------------------------------
+(deftype list-of (type)
+  "defines a type (list-of type) that can be used in type declerations"
+  (labels ((elements-are-of-type (seq type)
+	     (every (lambda (x) (typep x type)) seq)))
+    (let ((predicate (gensym "list-of-type")))
+      (setf (symbol-function predicate)
+	    #'(lambda (seq) (elements-are-of-type seq type)) )
+      `(and list (satisfies ,predicate)) )))
+--------------------------------------------------------------------------------
+
+And the following function decleration:
+
+--------------------------------------------------------------------------------
+(progn
+ (declaim
+  (ftype
+   (function ((function (integer) integer) &rest (list-of integer))
+    (list-of integer))
+   mint))
+ (defun mint (fun &rest args) (mapcar fun args)))
+--------------------------------------------------------------------------------
+
+ The type of args is not checked using the list-of type decleration, as follows:
+
+--------------------------------------------------------------------------------
+CL-USER> (mint (lambda (n) (+ n 1)) 'a 'b)
+; Evaluation aborted on #<SIMPLE-TYPE-ERROR expected-type: NUMBER datum: A>.
+--------------------------------------------------------------------------------
+
+This gave the following backtrace:
+
+--------------------------------------------------------------------------------
+Argument X is not a NUMBER: A
+   [Condition of type SIMPLE-TYPE-ERROR]
+
+Restarts:
+ 0: [RETRY] Retry SLIME REPL evaluation request.
+ 1: [*ABORT] Return to SLIME's top level.
+ 2: [TERMINATE-THREAD] Terminate this thread (#<THREAD "new-repl-thread" RUNNING {10037ADD71}>)
+
+Backtrace:
+  0: (SB-KERNEL:TWO-ARG-+ A 1)
+  1: ((LAMBDA (N)) A)
+  2: (MINT #<FUNCTION (LAMBDA #) {1003890D39}> A B)
+  3: (SB-INT:SIMPLE-EVAL-IN-LEXENV (MINT (LAMBDA (N) (+ N 1)) (QUOTE A) (QUOTE B)) #<NULL-LEXENV>)
+  4: (EVAL (MINT (LAMBDA (N) (+ N 1)) (QUOTE A) (QUOTE B)))
+--------------------------------------------------------------------------------
+
+Note: the type of fun is also not checked, but that is for another report.
+
+Expected behaviour is to have the compiler report an error if the
+&rest arguments do not satisfy the type decleration.
+
