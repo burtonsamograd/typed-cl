@@ -1,13 +1,6 @@
 Typed CL
 --------
 
-I love Common Lisp because it is the programmable programming
-language, but the one problem I have with it is that it is dynamically
-typed.  I often find myself looking through code that others have
-written wondering 'just what is the type of this function argument or
-variable'.  This package is an answer to my desire for more default
-type information in common lisp.
-
 Typed CL is an extension to Common Lisp which allows for the typed
 decleration of functions and variables.  Under the hood, it takes the
 type information and writes the declerations for you, making your code
@@ -64,8 +57,5 @@ Care has been taken to provide decent warning/error messages on
 invalid syntax but it's not perfect.  Sometimes the messages are a bit
 hard to decipher.
 
-Any comments/feedback can be sent to my email address below.
-
 --
 Burton Samograd <burton.samograd@gmail.com>
-http://kruhft.dyndns.org
